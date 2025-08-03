@@ -30,17 +30,16 @@ pipeline {
         }
 
         stage('Run Container on EC2') {
-            steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'efa83a57-c6c7-4fe1-9d7b-eac6bae6f663', keyFileVariable: 'SSH_KEY')]) {
-                    sh '''
-                        ssh -i $SSH_KEY -o StrictHostKeyChecking=no ubuntu@$EC2_HOST <<EOF
-                        docker stop hello-python || true
-                        docker rm hello-python || true
-                        docker run -d -p 5000:5000 --name hello-python hello-python:latest
-                        EOF
-                    '''
-                }
-            }
+    steps {
+        sh '''
+            ssh -i $SSH_KEY -o StrictHostKeyChecking=no ubuntu@$EC2_HOST << 'EOF'
+            docker stop hello-python || true
+            docker rm hello-python || true
+            docker run -d -p 5000:5000 --name hello-python hello-python:latest
+EOF
+        '''
+    }
+}
         }
     }
 }
