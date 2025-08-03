@@ -1,12 +1,11 @@
-FROM python:3.9-slim
+FROM python:3.9
 
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+COPY . .
 
-COPY app/ app/
+RUN pip install flask aws-xray-sdk
 
 EXPOSE 5000
 
-CMD ["python", "app/app.py"]
+CMD ["python", "main.py"]
