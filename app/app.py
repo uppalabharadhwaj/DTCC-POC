@@ -1,17 +1,22 @@
 from flask import Flask
 import logging
+import os
 from aws_xray_sdk.core import xray_recorder
 from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
 
 app = Flask(__name__)
 
-# Integrate X-Ray
+# Set up AWS X-Ray tracing
 xray_recorder.configure(service='DTCC-Flask-App')
 XRayMiddleware(app, xray_recorder)
 
-# Setup logging to file (for CloudWatch)
+# Make sure log directory exists
+log_path = '/app/app.log'
+os.makedirs(os.path.dirname(log_path), exist_ok=True)
+
+# Configure logging to file inside Docker container (mounted to host)
 logging.basicConfig(
-    filename='/home/ubuntu/app/app.log',
+    filename=log_path,
     level=logging.INFO,
     format='%(asctime)s %(levelname)s %(message)s'
 )
