@@ -2,14 +2,14 @@ pipeline {
     agent any
 
     environment {
-        EC2_HOST = "<EC2_PUBLIC_IP>"
+        EC2_HOST = "44.220.165.145"
         DOCKER_IMAGE = "hello-python:latest"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/<your-org>/hello-python.git'
+                git 'https://github.com/uppalabharadhwaj/DTCC-POC.git'
             }
         }
 
@@ -22,7 +22,7 @@ pipeline {
         stage('Save & Send Image to EC2') {
             steps {
                 sh '''
-                    docker save $DOCKER_IMAGE | bzip2 | ssh -o StrictHostKeyChecking=no ec2-user@$EC2_HOST "bunzip2 | docker load"
+                    docker save $DOCKER_IMAGE | bzip2 | ssh -o StrictHostKeyChecking=no ubuntu@$EC2_HOST "bunzip2 | docker load"
                 '''
             }
         }
@@ -30,7 +30,7 @@ pipeline {
         stage('Run Container on EC2') {
             steps {
                 sh '''
-                    ssh ec2-user@$EC2_HOST <<EOF
+                    ssh ubuntu@$EC2_HOST <<EOF
                     docker stop hello-python || true && docker rm hello-python || true
                     docker run -d -p 5000:5000 --name hello-python hello-python:latest
                     EOF
