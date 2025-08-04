@@ -1,15 +1,12 @@
-FROM python:3.9
+FROM python:3.9-slim
 
 WORKDIR /app
 
-# Copy application code
-COPY . .
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
-# Install required Python packages
-RUN pip install flask aws-xray-sdk
+COPY app/ app/
 
-# Expose Flask app port
 EXPOSE 5000
 
-# Start the Flask app
-CMD ["python", "app.py"]
+CMD ["python", "app/app.py"]
